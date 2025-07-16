@@ -1,0 +1,271 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Archivus - Enhanced Vault</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      background-color: #00000088;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00c6ff44;
+    }
+    header h1 {
+      font-size: 2rem;
+      color: #00c6ff;
+      font-family: 'Orbitron', sans-serif;
+    }
+    header a {
+      color: #00c6ff;
+      text-decoration: none;
+      font-weight: bold;
+      background-color: #ffffff11;
+      padding: 8px 16px;
+      border-radius: 6px;
+      transition: background 0.3s;
+    }
+    header a:hover {
+      background: #00c6ff22;
+    }
+    .vault-container {
+      max-width: 900px;
+      margin: auto;
+    }
+    .upload-box, .vault-list {
+      background: #1a2535;
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 12px #00c6ff33;
+    }
+    .upload-box h2, .vault-list h2 {
+      margin-bottom: 15px;
+      color: #00c6ff;
+      font-family: 'Orbitron', sans-serif;
+    }
+    .upload-box input, .upload-box select, .upload-box textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      background: #0f172a;
+      color: #fff;
+      border: 1px solid #00c6ff88;
+      border-radius: 8px;
+    }
+    .upload-box button {
+      background: #00c6ff;
+      color: #000;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .upload-box button:hover {
+      background: #00e6ff;
+    }
+    .vault-item {
+      background: #111827;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 8px #00c6ff33;
+    }
+    .vault-item h4 {
+      margin-bottom: 5px;
+      color: #00e6ff;
+    }
+    .vault-item p {
+      margin-bottom: 5px;
+      color: #ccc;
+      font-size: 0.95rem;
+    }
+    .vault-item iframe, .vault-item img {
+      width: 100%;
+      max-height: 200px;
+      border: none;
+      margin-top: 10px;
+      background: #000;
+      border-radius: 6px;
+    }
+    .vault-item .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .vault-item button {
+      background: #ff4d4d;
+      color: #fff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .vault-item button:hover {
+      background: #ff6666;
+    }
+    .folder-section h3 {
+      color: #94fdfd;
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+    }
+    .export-import {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .export-import button {
+      background: #00ffcc;
+      border: none;
+      padding: 8px 16px;
+      color: #000;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .export-import input {
+      color: #fff;
+    }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #bbb;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ARCHIVUS</h1>
+    <a href="../dashboard.html">Back to Dashboard</a>
+  </header>  <div class="vault-container">
+    <div class="upload-box">
+      <h2>Add Note / Upload File</h2>
+      <input type="file" id="fileInput">
+      <textarea id="noteInput" placeholder="Add a memo or description..."></textarea>
+      <select id="folderInput">
+        <option value="General">General</option>
+        <option value="Study">Study</option>
+        <option value="Work">Work</option>
+        <option value="Ideas">Ideas</option>
+      </select>
+      <button onclick="addToVault()">Add to Vault</button>
+    </div><div class="vault-list">
+  <h2>My Vault</h2>
+  <div class="export-import">
+    <button onclick="exportVault()">Export Vault</button>
+    <input type="file" accept="application/json" onchange="importVault(event)">
+  </div>
+  <div id="vaultItems"></div>
+</div>
+
+  </div>  <footer>
+    ARCHIVUS by Abhi · Part of XERION System © 2025
+  </footer>  <script>
+    let files = JSON.parse(localStorage.getItem('archivusFiles')) || [];
+
+    function renderVault() {
+      const container = document.getElementById('vaultItems');
+      container.innerHTML = '';
+      const folders = {};
+
+      files.forEach((file, index) => {
+        if (!folders[file.folder]) folders[file.folder] = [];
+        folders[file.folder].push({ ...file, index });
+      });
+
+      for (const folder in folders) {
+        const section = document.createElement('div');
+        section.className = 'folder-section';
+        section.innerHTML = `<h3>${folder}</h3>`;
+        folders[folder].forEach(file => {
+          const item = document.createElement('div');
+          item.className = 'vault-item';
+          const data = file.dataURL || '';
+const isImage = data.startsWith("data:image");
+const isText = data.startsWith("data:text");
+          item.innerHTML = `
+            <h4>${file.name}</h4>
+            <p>${file.note || ''}</p>
+            ${isImage ? `<img src="${data}" alt="${file.name}">` : isText ? `<iframe srcdoc="${data.split(',')[1]}"></iframe>` : `<a href="${data}" download="${file.name}" style="color:#0ff">Download File</a>`}
+            <div class="actions">
+              <button onclick="deleteFile(${file.index})">Delete</button>
+            </div>
+          `;
+          section.appendChild(item);
+        });
+        container.appendChild(section);
+      }
+    }
+
+    function deleteFile(index) {
+      files.splice(index, 1);
+      localStorage.setItem('archivusFiles', JSON.stringify(files));
+      renderVault();
+    }
+
+    function addToVault() {
+      const fileInput = document.getElementById('fileInput');
+      const note = document.getElementById('noteInput').value.trim();
+      const folder = document.getElementById('folderInput').value;
+      const file = fileInput.files[0];
+
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataURL = reader.result;
+        files.push({ name: file.name, note, folder, dataURL: reader.result });
+        localStorage.setItem('archivusFiles', JSON.stringify(files));
+        renderVault();
+        fileInput.value = '';
+        document.getElementById('noteInput').value = '';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function exportVault() {
+      const blob = new Blob([JSON.stringify(files)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'archivus-vault.json';
+      link.click();
+    }
+
+    function importVault(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const imported = JSON.parse(reader.result);
+          files = imported;
+          localStorage.setItem('archivusFiles', JSON.stringify(files));
+          renderVault();
+        } catch (e) {
+          alert('Invalid vault file');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    renderVault();
+  </script></body>
+</html>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mirror</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #141e30;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 24px;
+      color: #00fff7;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    }
+
+    header a {
+      color: #00fff7;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .mirror-container {
+      flex: 1;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .mirror-content {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+      width: 90%;
+      max-width: 1000px;
+    }
+
+    .card-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 15px;
+      padding: 20px;
+      transition: transform 0.3s;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .card .icon {
+      font-size: 30px;
+      color: #00fff7;
+      margin-bottom: 10px;
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      color: #00fff7;
+    }
+
+    .card .content {
+      display: none;
+    }
+
+    .card.active .content {
+      display: block;
+    }
+
+    .card input[type="text"], .card textarea, .card select {
+      width: 100%;
+      margin-top: 10px;
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    .card button {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: #00fff7;
+      border: none;
+      color: black;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .card ul {
+      list-style: none;
+      margin-top: 10px;
+    }
+
+    .progress-bar {
+      background: #333;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    .progress-fill {
+      height: 20px;
+      border-radius: 10px;
+      background: #00fff7;
+      width: 0%;
+      text-align: center;
+      color: #000;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span>Mirror</span>
+    <a href="../dashboard.html">Back to Dashboard</a>
+  </header>
+
+  <div class="mirror-container">
+    <div class="mirror-content">
+      <div class="card-container">
+
+        <div class="card">
+          <div class="icon"><i class="fas fa-dumbbell"></i></div>
+          <h3>Habits</h3>
+          <div class="content" id="habits">
+            <label><input type="checkbox" onchange="updateProgress()"> Workout</label><br>
+            <label><input type="checkbox" onchange="updateProgress()"> Reading</label><br>
+            <label><input type="checkbox" onchange="updateProgress()"> Meditation</label>
+            <div class="progress-bar"><div class="progress-fill" id="habitProgress">0%</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="icon"><i class="fas fa-smile"></i></div>
+          <h3>Mood</h3>
+          <div class="content" id="mood">
+            <select id="moodSelect" onchange="saveMood()">
+              <option value="happy">Happy</option>
+              <option value="sad">Sad</option>
+              <option value="neutral">Neutral</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="icon"><i class="fas fa-bed"></i></div>
+          <h3>Dream Log</h3>
+          <div class="content" id="dreams">
+            <textarea id="dreamInput" placeholder="Describe your dream..."></textarea>
+            <button onclick="saveDream()">Save Dream</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="icon"><i class="fas fa-heart"></i></div>
+          <h3>Interests</h3>
+          <div class="content" id="interests">
+            <input type="text" id="interestInput" placeholder="Your interests">
+            <button onclick="saveInterest()">Save Interest</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="icon"><i class="fas fa-bullseye"></i></div>
+          <h3>Goals</h3>
+          <div class="content" id="goals">
+            <input type="text" id="goalInput" placeholder="Add a goal">
+            <button onclick="saveGoal()">Save Goal</button>
+            <ul id="goalList"></ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="icon"><i class="fas fa-chart-bar"></i></div>
+          <h3>My Stats</h3>
+          <div class="content" id="stats">
+            <p id="moodStat"></p>
+            <p id="habitStat"></p>
+            <p id="goalStat"></p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="icon"><i class="fas fa-quote-left"></i></div>
+          <h3>Daily Quote</h3>
+          <div class="content" id="quote">
+            <p id="quoteText">“Believe you can and you're halfway there.”</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="icon"><i class="fas fa-user-astronaut"></i></div>
+          <h3>Mirror AI Reflection</h3>
+          <div class="content" id="reflection">
+            <textarea id="reflectionInput" placeholder="Ask Xerion your question..."></textarea>
+            <button onclick="generateReflection()">Reflect</button>
+            <p id="reflectionResponse"></p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', function (e) {
+        if (!e.target.closest('input') && !e.target.closest('textarea') && !e.target.closest('select') && !e.target.closest('button')) {
+          this.classList.toggle('active');
+        }
+      });
+    });
+
+    function updateProgress() {
+      const checkboxes = document.querySelectorAll('#habits input[type="checkbox"]');
+      const total = checkboxes.length;
+      let completed = 0;
+      checkboxes.forEach(cb => { if (cb.checked) completed++; });
+      const percent = Math.round((completed / total) * 100);
+      document.getElementById('habitProgress').style.width = percent + '%';
+      document.getElementById('habitProgress').textContent = percent + '%';
+      renderStats();
+    }
+
+    function saveMood() {
+      const mood = document.getElementById('moodSelect').value;
+      let history = JSON.parse(localStorage.getItem('moodHistory')) || [];
+      history.push({ mood, time: new Date().toLocaleString() });
+      localStorage.setItem('moodHistory', JSON.stringify(history));
+      renderStats();
+    }
+
+    function saveDream() {
+      const val = document.getElementById('dreamInput').value;
+      if (val.trim()) {
+        localStorage.setItem('userDream', val);
+        alert('Dream saved!');
+      }
+    }
+
+    function saveInterest() {
+      const val = document.getElementById('interestInput').value;
+      if (val.trim()) {
+        localStorage.setItem('userInterests', val);
+        alert('Interest saved!');
+      }
+    }
+
+    function saveGoal() {
+      const val = document.getElementById('goalInput').value;
+      if (val.trim()) {
+        let goals = JSON.parse(localStorage.getItem('userGoals')) || [];
+        goals.push(val);
+        localStorage.setItem('userGoals', JSON.stringify(goals));
+        renderGoals();
+        document.getElementById('goalInput').value = '';
+        renderStats();
+      }
+    }
+
+    function renderGoals() {
+      const list = document.getElementById('goalList');
+      list.innerHTML = '';
+      const goals = JSON.parse(localStorage.getItem('userGoals')) || [];
+      goals.forEach(goal => {
+        const li = document.createElement('li');
+        li.textContent = goal;
+        list.appendChild(li);
+      });
+    }
+
+    function renderStats() {
+      const moodHistory = JSON.parse(localStorage.getItem('moodHistory')) || [];
+      const moodCount = moodHistory.length;
+      const lastMood = moodHistory[moodCount - 1]?.mood || 'None';
+      document.getElementById('moodStat').textContent = `Mood Entries: ${moodCount}, Last Mood: ${lastMood}`;
+
+      const habits = document.querySelectorAll('#habits input[type="checkbox"]');
+      let done = 0;
+      habits.forEach(cb => { if (cb.checked) done++; });
+      document.getElementById('habitStat').textContent = `Habits Completed: ${done}/${habits.length}`;
+
+      const goals = JSON.parse(localStorage.getItem('userGoals')) || [];
+      document.getElementById('goalStat').textContent = `Goals Set: ${goals.length}`;
+    }
+
+    function generateReflection() {
+      const input = document.getElementById('reflectionInput').value.toLowerCase();
+      const response = document.getElementById('reflectionResponse');
+      if (input.includes('mood')) {
+        const moods = JSON.parse(localStorage.getItem('moodHistory')) || [];
+        const last = moods[moods.length - 1]?.mood || 'unknown';
+        response.textContent = `You were feeling ${last} recently. Want to talk about it?`;
+      } else if (input.includes('dream')) {
+        const dream = localStorage.getItem('userDream');
+        response.textContent = dream ? `You dreamed about: \"${dream}\".` : "I couldn't find your last dream.";
+      } else if (input.includes('goal')) {
+        const goals = JSON.parse(localStorage.getItem('userGoals')) || [];
+        response.textContent = goals.length ? `You’ve set ${goals.length} goals. Let’s keep going!` : "No goals yet. Want to add one?";
+      } else {
+        response.textContent = "I’m reflecting... try asking about your mood, dreams, or goals!";
+      }
+    }
+
+    window.onload = () => {
+      renderGoals();
+      updateProgress();
+      renderStats();
+    }
+  </script>
+</body>
+</html>

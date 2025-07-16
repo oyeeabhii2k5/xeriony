@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pathfinder</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f2027;
+      background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 30px;
+      background: rgba(0, 0, 0, 0.7);
+      font-size: 24px;
+      color: #00fff7;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    }
+
+    header a {
+      color: #00fff7;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .container {
+      flex: 1;
+      padding: 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .path-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .path-card:hover {
+      transform: scale(1.03);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .path-card h3 {
+      color: #00fff7;
+      margin-bottom: 10px;
+    }
+
+    .path-card p {
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .path-card input[type="text"], .path-card select, .path-card textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .path-card button {
+      padding: 10px 20px;
+      background: #00fff7;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .timeline {
+      border-left: 3px solid #00fff7;
+      padding-left: 20px;
+      margin-top: 20px;
+    }
+
+    .timeline-event {
+      margin-bottom: 20px;
+    }
+
+    .timeline-event h4 {
+      color: #00fff7;
+    }
+
+    .timeline-event p {
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    .message {
+      font-size: 18px;
+      color: #00fff7;
+      margin-top: 20px;
+    }
+
+    .expandable-card {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .expandable-card:hover {
+      background: rgba(0, 255, 255, 0.1);
+    }
+
+    .expandable-card-content {
+      display: none;
+      margin-top: 15px;
+    }
+
+    .expandable-card.active .expandable-card-content {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span>Pathfinder</span>
+    <a href="../dashboard.html">Back to Dashboard</a>
+  </header>
+
+  <div class="container">
+    <!-- Career Planning -->
+    <div class="path-card">
+      <h3><i class="fas fa-graduation-cap"></i> Career Planning</h3>
+      <div class="content">
+        <label>Choose your career:</label>
+        <select id="careerSelect" onchange="saveCareerInterest()">
+          <option value="Technology">Technology</option>
+          <option value="Healthcare">Healthcare</option>
+          <option value="Arts">Arts</option>
+          <option value="Finance">Finance</option>
+          <option value="Entrepreneurship">Entrepreneurship</option>
+        </select>
+        <textarea id="careerDetails" placeholder="Why did you choose this? (optional)" rows="4"></textarea>
+        <button onclick="saveCareerDetails()">Save Career Choice</button>
+      </div>
+    </div>
+
+    <!-- Learning Journey -->
+    <div class="path-card">
+      <h3><i class="fas fa-book"></i> Learning Journey</h3>
+      <div class="content">
+        <label>Choose Course:</label>
+        <input type="text" id="courseInput" placeholder="Enter course name">
+        <button onclick="saveCourse()">Save Course</button>
+      </div>
+      <div id="courseMessage" class="message"></div>
+    </div>
+
+    <!-- Life Milestones -->
+    <div class="path-card">
+      <h3><i class="fas fa-route"></i> Life Milestones</h3>
+      <div class="content">
+        <label>Milestone Name:</label>
+        <input type="text" id="milestoneName" placeholder="Enter milestone name">
+        <label>Milestone Date:</label>
+        <input type="text" id="milestoneDate" placeholder="Enter milestone date">
+        <button onclick="saveMilestone()">Save Milestone</button>
+      </div>
+      <div class="timeline" id="milestoneTimeline"></div>
+    </div>
+
+    <!-- Daily Planner -->
+    <div class="path-card">
+      <h3><i class="fas fa-calendar-check"></i> Daily Planner</h3>
+      <div class="content">
+        <label>Task:</label>
+        <input type="text" id="taskInput" placeholder="Enter task">
+        <button onclick="saveTask()">Save Task</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Save Career Interest
+    function saveCareerInterest() {
+      const career = document.getElementById('careerSelect').value;
+      localStorage.setItem('careerInterest', career);
+      alert('Career interest saved!');
+    }
+
+    // Save Career Details
+    function saveCareerDetails() {
+      const career = document.getElementById('careerSelect').value;
+      const details = document.getElementById('careerDetails').value;
+      localStorage.setItem('careerDetails', JSON.stringify({ career, details }));
+      alert(`Your career path in ${career} has been saved!`);
+    }
+
+    // Save Course with Motivation
+    function saveCourse() {
+      const course = document.getElementById('courseInput').value;
+      localStorage.setItem('course', course);
+      document.getElementById('courseMessage').textContent = `You've made a great decision by choosing to learn ${course}. Keep pushing forward!`;
+      setTimeout(() => {
+        document.getElementById('courseMessage').textContent = '';
+      }, 5000);
+    }
+
+    // Save Milestone
+    function saveMilestone() {
+      const name = document.getElementById('milestoneName').value;
+      const date = document.getElementById('milestoneDate').value;
+      const milestone = { name, date };
+      let milestones = JSON.parse(localStorage.getItem('milestones')) || [];
+      milestones.push(milestone);
+      localStorage.setItem('milestones', JSON.stringify(milestones));
+      renderMilestones();
+    }
+
+    // Render Milestones
+    function renderMilestones() {
+      const milestones = JSON.parse(localStorage.getItem('milestones')) || [];
+      const milestoneTimeline = document.getElementById('milestoneTimeline');
+      milestoneTimeline.innerHTML = '';
+      milestones.forEach(milestone => {
+        const event = document.createElement('div');
+        event.classList.add('timeline-event');
+        event.innerHTML = `
+          <h4>${milestone.name}</h4>
+          <p>Achieved on: ${milestone.date}</p>
+        `;
+        milestoneTimeline.appendChild(event);
+      });
+    }
+
+    // Save Task
+    function saveTask() {
+      const task = document.getElementById('taskInput').value;
+      let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      tasks.push(task);
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+      alert('Task saved!');
+    }
+
+   
+    // Load saved data
+    window.onload = () => {
+      const career = localStorage.getItem('careerInterest');
+      const course = localStorage.getItem('course');
+      const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      const milestones = JSON.parse(localStorage.getItem('milestones')) || [];
+
+      document.getElementById('careerSelect').value = career || 'Technology';
+      document.getElementById('courseInput').value = course || '';
+      
+      // Render milestones
+      renderMilestones();
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dreamscope - XERION AI Vision</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      padding: 20px;
+      background: #111;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      font-family: 'Orbitron', sans-serif;
+      color: #ffdf00;
+      font-size: 1.8rem;
+    }
+    header a {
+      color: #ffdf00;
+      text-decoration: none;
+      font-weight: bold;
+      border: 1px solid #ffdf00;
+      padding: 8px 16px;
+      border-radius: 6px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+    h2 {
+      color: #fff600;
+      font-family: 'Orbitron', sans-serif;
+      margin-bottom: 20px;
+    }
+    .vision-box {
+      background: #000000bb;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 12px #ffeb3b44;
+    }
+    textarea {
+      width: 100%;
+      height: 120px;
+      border-radius: 10px;
+      border: none;
+      padding: 15px;
+      background: #1a1a1a;
+      color: #ffeb3b;
+      font-family: monospace;
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+    button {
+      background: #ffeb3b;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #fff700;
+    }
+    .dream-output {
+      margin-top: 20px;
+      padding: 20px;
+      background: #111;
+      border-radius: 10px;
+      color: #0f0;
+      white-space: pre-wrap;
+      box-shadow: 0 0 10px #ffeb3b33;
+      font-family: monospace;
+    }
+    .history-log {
+      margin-top: 40px;
+      background: #222;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px #00000077;
+    }
+    .history-log h3 {
+      color: #ffeb3b;
+      font-family: 'Orbitron', sans-serif;
+    }
+    .history-log ul {
+      list-style-type: square;
+      padding-left: 20px;
+    }
+    .history-log li {
+      color: #ccc;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Dreamscope</h1>
+    <a href="../dashboard.html">⬅ Dashboard</a>
+  </header>  <div class="container">
+    <h2>Dream Visualizer (Powered by XERION)</h2>
+    <div class="vision-box">
+      <textarea id="dreamInput" placeholder="Describe your dream, thought, or futuristic vision..."></textarea>
+      <button onclick="generateDream()">Visualize</button>
+      <div id="dreamOutput" class="dream-output"></div>
+    </div><div class="history-log">
+  <h3>Dream Log History</h3>
+  <ul id="dreamHistory"></ul>
+</div>
+
+  </div>  <script>
+    function generateDream() {
+      const input = document.getElementById('dreamInput').value.trim();
+      const output = document.getElementById('dreamOutput');
+      if (!input) {
+        output.innerText = '🛑 Please enter a vision or idea to visualize.';
+        return;
+      }
+
+      const seed = input.length;
+      const fakeVision = `🔮 Dreamscope Analysis:\n\nVision Strength: ${Math.min(100, seed * 3)}%\nReal-World Compatibility: ${seed % 2 === 0 ? 'High' : 'Theoretical'}\n\nXERION Interpretation:\n"${input}" could evolve into a ${seed % 3 === 0 ? 'tangible invention' : 'futuristic simulation'}, depending on environmental factors and user intent.\n\nProjected Timeline: ${2025 + (seed % 10)} - ${2030 + (seed % 5)}\nPotential Impact: ${seed % 2 === 0 ? 'Mass Adoption' : 'Experimental Prototype'}\n\n✨ Keep dreaming big.`;
+
+      output.innerText = fakeVision;
+
+      const history = JSON.parse(localStorage.getItem('dreamLog')) || [];
+      history.unshift({ text: input, time: new Date().toLocaleString() });
+      localStorage.setItem('dreamLog', JSON.stringify(history));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const history = JSON.parse(localStorage.getItem('dreamLog')) || [];
+      const list = document.getElementById('dreamHistory');
+      list.innerHTML = history.map(h => `<li><strong>${h.time}:</strong> ${h.text}</li>`).join('');
+    }
+
+    renderHistory();
+  </script></body>
+</html>

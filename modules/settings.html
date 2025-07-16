@@ -1,0 +1,199 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Settings - Xerion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --accent: #00ffc8;
+      --bg: linear-gradient(to right, #1f4037, #99f2c8);
+      --text: #fff;
+    }body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--accent);
+  font-size: 22px;
+  box-shadow: 0 0 10px rgba(0, 255, 200, 0.3);
+}
+
+header a {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.container {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: rgba(0,0,0,0.3);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0,255,200,0.2);
+}
+
+.card h3 {
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.card label, .card input, .card select, .card button {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+input[type="checkbox"] {
+  width: auto;
+  margin-right: 10px;
+}
+
+button {
+  background: var(--accent);
+  color: #000;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <span>Settings</span>
+    <a href="dashboard.html">Back to Dashboard</a>
+  </header>  <div class="container">
+    <div class="card">
+      <h3>Theme Settings</h3>
+      <label for="themeSelect">Choose Theme:</label>
+      <select id="themeSelect">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+        <option value="auto">Auto</option>
+      </select>
+      <button onclick="saveTheme()">Save Theme</button>
+    </div><div class="card">
+  <h3>Account</h3>
+  <input type="password" placeholder="New Password" id="newPass" />
+  <button onclick="alert('Password updated (simulated).')">Update Password</button>
+  <button onclick="logout()">Logout</button>
+</div>
+
+<div class="card">
+  <h3>App Preferences</h3>
+  <div class="toggle"><label><input type="checkbox" id="dailyQuotes" /> Daily Quotes</label></div>
+  <div class="toggle"><label><input type="checkbox" id="notifToggle" /> Notifications</label></div>
+  <div class="toggle"><label><input type="checkbox" id="autoSave" /> Auto-Save Enabled</label></div>
+  <button onclick="savePreferences()">Save Preferences</button>
+</div>
+
+<div class="card">
+  <h3>Data Control</h3>
+  <button onclick="exportData()">Export All Data</button>
+  <button onclick="importData()">Import Data</button>
+  <button onclick="clearData()">Reset App</button>
+</div>
+
+<div class="card">
+  <h3>Accessibility</h3>
+  <label for="fontSize">Font Size:</label>
+  <select id="fontSize">
+    <option value="small">Small</option>
+    <option value="medium" selected>Medium</option>
+    <option value="large">Large</option>
+  </select>
+  <button onclick="adjustFont()">Apply</button>
+</div>
+
+  </div>  <script>
+    function saveTheme() {
+      const theme = document.getElementById("themeSelect").value;
+      localStorage.setItem("theme", theme);
+      alert("Theme saved. Reload to apply.");
+    }
+
+    function logout() {
+      alert("Logging out (simulated). Redirecting...");
+      window.location.href = "welcome.html";
+    }
+
+    function savePreferences() {
+      const quotes = document.getElementById("dailyQuotes").checked;
+      const notif = document.getElementById("notifToggle").checked;
+      const auto = document.getElementById("autoSave").checked;
+      localStorage.setItem("pref_quotes", quotes);
+      localStorage.setItem("pref_notif", notif);
+      localStorage.setItem("pref_auto", auto);
+      alert("Preferences saved!");
+    }
+
+    function clearData() {
+      if (confirm("Are you sure? This will clear all saved data.")) {
+        localStorage.clear();
+        alert("All data reset.");
+        location.reload();
+      }
+    }
+
+    function exportData() {
+      const data = JSON.stringify(localStorage);
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = "xerion_data_backup.json";
+      link.click();
+    }
+
+    function importData() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const data = JSON.parse(event.target.result);
+          for (let key in data) {
+            localStorage.setItem(key, data[key]);
+          }
+          alert("Data imported. Reloading...");
+          location.reload();
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    }
+
+    function adjustFont() {
+      const size = document.getElementById("fontSize").value;
+      document.body.style.fontSize = size === 'small' ? '14px' : size === 'large' ? '18px' : '16px';
+      alert("Font size adjusted.");
+    }
+  </script></body>
+</html>

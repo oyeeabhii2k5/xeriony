@@ -1,0 +1,204 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vivid - Interest Tracker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }header {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 22px;
+  color: #00ffc8;
+}
+
+header a {
+  color: #00ffc8;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.container {
+  padding: 30px;
+}
+
+.section {
+  margin-bottom: 30px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 255, 200, 0.2);
+}
+
+.section h3 {
+  color: #00ffc8;
+  margin-bottom: 10px;
+}
+
+.section input,
+.section textarea,
+.section button,
+.section select {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+}
+
+.section button {
+  background: #00ffc8;
+  color: #000;
+  cursor: pointer;
+}
+
+.log-entry {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.log-entry h4 {
+  margin: 0;
+  color: #00ffc8;
+}
+
+.log-entry p {
+  font-size: 14px;
+}
+
+.log-entry small {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #ccc;
+}
+
+.creative-output {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <span>Vivid - Interest & Activity Tracker</span>
+    <a href="dashboard.html">Back to Dashboard</a>
+  </header>  <div class="container">
+    <div class="section">
+      <h3><i class="fas fa-lightbulb"></i> Log New Interest</h3>
+      <input type="text" id="interestTitle" placeholder="Enter interest title">
+      <textarea id="interestDetails" placeholder="Describe why you're interested..." rows="3"></textarea>
+      <select id="interestTag">
+        <option value="Creativity">Creativity</option>
+        <option value="Tech">Tech</option>
+        <option value="Health">Health</option>
+        <option value="Art">Art</option>
+        <option value="Science">Science</option>
+        <option value="Philosophy">Philosophy</option>
+      </select>
+      <button onclick="saveInterest()">Save Interest</button>
+    </div><div class="section">
+  <h3><i class="fas fa-magic"></i> Xerion Reflects On Your Interests</h3>
+  <div class="creative-output" id="xerionOutput">
+    Add some interests to let Xerion generate ideas, quotes, or visuals for you!
+  </div>
+</div>
+
+<div class="section">
+  <h3><i class="fas fa-history"></i> Interest History</h3>
+  <div id="interestLogs"></div>
+</div>
+
+  </div>  <script>
+    function saveInterest() {
+      const title = document.getElementById('interestTitle').value.trim();
+      const details = document.getElementById('interestDetails').value.trim();
+      const tag = document.getElementById('interestTag').value;
+
+      if (!title || !details) {
+        alert("Please fill out both fields.");
+        return;
+      }
+
+      const entry = {
+        title,
+        details,
+        tag,
+        timestamp: new Date().toLocaleString()
+      };
+
+      let logs = JSON.parse(localStorage.getItem('vividInterests')) || [];
+      logs.unshift(entry);
+      localStorage.setItem('vividInterests', JSON.stringify(logs));
+
+      document.getElementById('interestTitle').value = "";
+      document.getElementById('interestDetails').value = "";
+
+      renderLogs();
+      reflectWithXerion();
+    }
+
+    function renderLogs() {
+      const logs = JSON.parse(localStorage.getItem('vividInterests')) || [];
+      const container = document.getElementById('interestLogs');
+      container.innerHTML = '';
+
+      logs.forEach(entry => {
+        const div = document.createElement('div');
+        div.classList.add('log-entry');
+        div.innerHTML = `
+          <h4>${entry.title}</h4>
+          <p>${entry.details}</p>
+          <small>Tag: ${entry.tag} | Logged: ${entry.timestamp}</small>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function reflectWithXerion() {
+      const logs = JSON.parse(localStorage.getItem('vividInterests')) || [];
+      const out = document.getElementById('xerionOutput');
+      if (logs.length === 0) {
+        out.innerHTML = 'Add some interests to let Xerion generate ideas, quotes, or visuals for you!';
+        return;
+      }
+
+      const latest = logs[0];
+      const thoughts = {
+        "Creativity": "\"Creativity is intelligence having fun.\" - Let Xerion visualize your next art piece!",
+        "Tech": "\"The future belongs to those who code it.\" - Xerion suggests building something innovative today.",
+        "Health": "\"A healthy mind lives in a healthy body.\" - Remember to stretch and hydrate!",
+        "Art": "\"Art enables us to find ourselves and lose ourselves at the same time.\" - Imagine a surreal painting based on your thoughts.",
+        "Science": "\"Somewhere, something incredible is waiting to be known.\" - Dive deeper into this curiosity!",
+        "Philosophy": "\"The unexamined life is not worth living.\" - What does this interest say about your mind?"
+      };
+
+      out.innerHTML = `
+        <strong>Latest Interest:</strong> ${latest.title}<br>
+        <em>${thoughts[latest.tag] || 'Keep exploring and creating!'}</em>
+      `;
+    }
+
+    window.onload = () => {
+      renderLogs();
+      reflectWithXerion();
+    };
+  </script></body>
+</html>

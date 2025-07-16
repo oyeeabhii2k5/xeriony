@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tasks - Xerion</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --accent: #00ffc8;
+      --bg: linear-gradient(to right, #1f4037, #99f2c8);
+      --text: #fff;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.6);
+      color: var(--accent);
+      font-size: 22px;
+      box-shadow: 0 0 10px rgba(0, 255, 200, 0.3);
+    }
+
+    header a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .container {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .task-card {
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,255,200,0.2);
+    }
+
+    .task-card h3 {
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .task-card input[type="text"],
+    .task-card select,
+    .task-card textarea,
+    .task-card input[type="date"] {
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .task-card button {
+      background: var(--accent);
+      color: #000;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .task-list {
+      grid-column: span 2;
+      margin-top: 20px;
+    }
+
+    .task-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      margin-bottom: 10px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 8px;
+    }
+
+    .task-item span {
+      flex: 1;
+      margin-left: 10px;
+    }
+
+    .task-item button {
+      background: #ff3b3b;
+      color: #fff;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .task-item button:hover {
+      background: #ff0000;
+    }
+
+    .task-item input[type="checkbox"] {
+      transform: scale(1.2);
+    }
+
+    .completed {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span>Task Management</span>
+    <a href="../dashboard.html">Back to Dashboard</a>
+  </header>
+
+  <div class="container">
+    <div class="task-card">
+      <h3><i class="fas fa-tasks"></i> Add New Task</h3>
+      <label for="taskName">Task Name:</label>
+      <input type="text" id="taskName" placeholder="Enter task name" />
+
+      <label for="taskCategory">Category:</label>
+      <select id="taskCategory">
+        <option value="Work">Work</option>
+        <option value="Personal">Personal</option>
+        <option value="Study">Study</option>
+        <option value="Groceries">Groceries</option>
+      </select>
+
+      <label for="taskPriority">Priority:</label>
+      <select id="taskPriority">
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+
+      <label for="taskDueDate">Due Date:</label>
+      <input type="date" id="taskDueDate" />
+
+      <button onclick="addTask()">Add Task</button>
+    </div>
+
+    <div class="task-list" id="taskList"></div>
+  </div>
+
+  <script>
+    function addTask() {
+      const taskName = document.getElementById('taskName').value.trim();
+      const taskCategory = document.getElementById('taskCategory').value;
+      const taskPriority = document.getElementById('taskPriority').value;
+      const taskDueDate = document.getElementById('taskDueDate').value;
+
+      if (!taskName) {
+        alert('Please enter a task name.');
+        return;
+      }
+
+      const task = {
+        name: taskName,
+        category: taskCategory,
+        priority: taskPriority,
+        dueDate: taskDueDate,
+        completed: false
+      };
+
+      let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      tasks.push(task);
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+
+      renderTasks();
+      clearTaskInput();
+    }
+
+    function renderTasks() {
+      const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      const taskList = document.getElementById('taskList');
+      taskList.innerHTML = '';
+
+      tasks.forEach((task, index) => {
+        const taskItem = document.createElement('div');
+        taskItem.classList.add('task-item');
+
+        const textStyle = task.completed ? 'completed' : '';
+
+        taskItem.innerHTML = `
+          <input type="checkbox" onchange="toggleComplete(${index})" ${task.completed ? 'checked' : ''} />
+          <span class="${textStyle}">
+            <strong>${task.name}</strong> (${task.category}) - ${task.priority}<br>
+            Due: ${task.dueDate}
+          </span>
+          <button onclick="deleteTask(${index})">Delete</button>
+        `;
+
+        taskList.appendChild(taskItem);
+      });
+    }
+
+    function toggleComplete(index) {
+      let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      tasks[index].completed = !tasks[index].completed;
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+      renderTasks();
+    }
+
+    function deleteTask(index) {
+      let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+      tasks.splice(index, 1);
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+      renderTasks();
+    }
+
+    function clearTaskInput() {
+      document.getElementById('taskName').value = '';
+      document.getElementById('taskCategory').value = 'Work';
+      document.getElementById('taskPriority').value = 'Medium';
+      document.getElementById('taskDueDate').value = '';
+    }
+
+    window.onload = renderTasks;
+  </script>
+</body>
+</html>

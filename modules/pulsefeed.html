@@ -1,0 +1,233 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PulseFeed</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --accent: #00ffc8;
+      --bg: linear-gradient(to right, #1f4037, #99f2c8);
+      --text: #fff;
+    }body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 10px #000;
+  font-size: 24px;
+  color: var(--accent);
+}
+
+header a {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.refresh-btn {
+  margin: 20px auto;
+  padding: 10px 20px;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.container {
+  flex: 1;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: rgba(0,0,0,0.3);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 255, 200, 0.2);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 15px rgba(0, 255, 200, 0.4);
+}
+
+.card h3 {
+  margin-bottom: 10px;
+  color: var(--accent);
+}
+
+input[type="text"], input[type="checkbox"] {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: none;
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 8px 16px;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+ul {
+  padding-left: 20px;
+}
+
+label {
+  display: block;
+  margin: 5px 0;
+}
+
+@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 20px;
+  }
+  .refresh-btn {
+    width: 90%;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <span>PulseFeed</span>
+    <a href="../dashboard.html">Back to Dashboard</a>
+  </header><button class="refresh-btn" onclick="refreshPulseFeed()">🔄 Refresh Feed</button>
+
+  <div class="container">
+    <div class="card" id="quoteCard">
+      <h3>Daily Quote</h3>
+      <p id="quoteText"></p>
+    </div><div class="card" id="moodCard">
+  <h3>Suggested Music</h3>
+  <form id="moodForm">
+    <label><input type="radio" name="mood" value="happy"> 😊 Happy</label>
+    <label><input type="radio" name="mood" value="sad"> 😢 Sad</label>
+    <label><input type="radio" name="mood" value="angry"> 😠 Angry</label>
+    <label><input type="radio" name="mood" value="tired"> 😴 Tired</label>
+    <label><input type="radio" name="mood" value="focus"> 😎 Focus</label>
+  </form>
+  <p id="moodMusic">Select your mood to get music suggestions</p>
+</div>
+
+<div class="card" id="activityCard">
+  <h3>Recent Activity</h3>
+  <ul id="activityList">
+    <li>No recent activity</li>
+  </ul>
+</div>
+
+<div class="card" id="tipCard">
+  <h3>Productivity Tip</h3>
+  <p id="tipText"></p>
+</div>
+
+<div class="card" id="taskCard">
+  <h3>Top 3 Tasks</h3>
+  <ul id="taskList">
+    <li>No tasks saved</li>
+  </ul>
+</div>
+
+<div class="card" id="focusCard">
+  <h3>Today's Focus</h3>
+  <input type="text" id="focusInput" placeholder="What's your main focus today?">
+  <button onclick="saveFocus()">Save Focus</button>
+  <p id="focusDisplay"></p>
+</div>
+
+<div class="card" id="preferenceCard">
+  <h3>Set Preferences</h3>
+  <input type="text" id="userName" placeholder="Your Name">
+  <input type="text" id="favMusic" placeholder="Fav Music Type">
+  <button onclick="savePreferences()">Save Preferences</button>
+</div>
+
+  </div>  <script>
+    const quotes = [
+      "Your limitation—it’s only your imagination.",
+      "Push yourself, because no one else is going to do it for you.",
+      "Great things never come from comfort zones.",
+      "Dream it. Wish it. Do it.",
+      "Success doesn’t just find you. You have to go out and get it."
+    ];
+
+    const tips = [
+      "Use the Pomodoro technique for focused work.",
+      "Break big goals into small steps.",
+      "Eliminate distractions before starting.",
+      "Prioritize your top 3 goals each day.",
+      "Use affirmations to boost self-confidence."
+    ];
+
+    function refreshPulseFeed() {
+      document.getElementById("quoteText").innerText = quotes[Math.floor(Math.random() * quotes.length)];
+      document.getElementById("tipText").innerText = tips[Math.floor(Math.random() * tips.length)];
+
+      const mood = localStorage.getItem("mood") || "neutral";
+      let moodTrack = "🎧 Select a mood above to get suggestions";
+      if (mood === "happy") moodTrack = "🎵 Upbeat Pop for a happy vibe!";
+      else if (mood === "sad") moodTrack = "🎶 Calm Piano to lift you up.";
+      else if (mood === "angry") moodTrack = "🔥 Chillhop to cool your mind.";
+      else if (mood === "tired") moodTrack = "😴 Ambient waves for relaxation.";
+      else if (mood === "focus") moodTrack = "🧠 Lo-fi beats for deep focus.";
+      document.getElementById("moodMusic").innerText = moodTrack;
+
+      const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      document.getElementById("taskList").innerHTML = tasks.slice(0,3).map(task => `<li>${task}</li>`).join("") || '<li>No tasks saved</li>';
+
+      const logs = JSON.parse(localStorage.getItem("activityLog")) || [];
+      document.getElementById("activityList").innerHTML = logs.slice(-3).reverse().map(a => `<li>${a}</li>`).join("") || '<li>No recent activity</li>';
+
+      const focus = localStorage.getItem("focusGoal") || "Not set yet";
+      document.getElementById("focusDisplay").textContent = focus;
+    }
+
+    function savePreferences() {
+      const name = document.getElementById("userName").value;
+      const music = document.getElementById("favMusic").value;
+      localStorage.setItem("userName", name);
+      localStorage.setItem("favMusic", music);
+      alert("Preferences saved!");
+    }
+
+    function saveFocus() {
+      const focus = document.getElementById("focusInput").value;
+      localStorage.setItem("focusGoal", focus);
+      document.getElementById("focusDisplay").textContent = focus;
+      alert("Today's focus saved!");
+    }
+
+    document.getElementById("moodForm").addEventListener("change", e => {
+      const mood = e.target.value;
+      localStorage.setItem("mood", mood);
+      refreshPulseFeed();
+    });
+
+    window.onload = refreshPulseFeed;
+  </script></body>
+</html>

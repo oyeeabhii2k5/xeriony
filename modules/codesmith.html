@@ -1,0 +1,190 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeSmith - XERION Module</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: #f8f8f8;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #111;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    header h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      color: #00f0ff;
+    }
+    header a {
+      color: #00f0ff;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 8px 16px;
+      border: 1px solid #00f0ff;
+      border-radius: 6px;
+    }
+    .codesmith-container {
+      max-width: 1000px;
+      margin: auto;
+      background: #1e1e2f;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 0 10px #00f0ff33;
+    }
+    .codesmith-container h2 {
+      font-family: 'Orbitron', sans-serif;
+      color: #00f0ff;
+      margin-bottom: 20px;
+    }
+    .tab-controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .tab-controls button {
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: none;
+      background: #444;
+      color: #0ff;
+      cursor: pointer;
+    }
+    .tab-controls button.active {
+      background: #00f0ff;
+      color: #000;
+      font-weight: bold;
+    }
+    textarea {
+      width: 100%;
+      height: 300px;
+      background: #111;
+      color: #0ff;
+      border: 1px solid #00f0ff88;
+      padding: 15px;
+      font-family: 'Courier New', monospace;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+    .template-select {
+      margin: 10px 0;
+    }
+    select {
+      background: #000;
+      color: #0ff;
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #00f0ff88;
+    }
+    button.run-btn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #00f0ff;
+      border: none;
+      color: #000;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .output {
+      margin-top: 25px;
+      padding: 15px;
+      background: #000;
+      color: #0f0;
+      border: 1px solid #0f0;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+      min-height: 100px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>CodeSmith</h1>
+    <a href="../dashboard.html">⬅ Dashboard</a>
+  </header>  <div class="codesmith-container">
+    <h2>Write and Run HTML, CSS, JS Snippets</h2><div class="tab-controls">
+  <button onclick="switchTab(0)" class="active">Tab 1</button>
+  <button onclick="switchTab(1)">Tab 2</button>
+  <button onclick="switchTab(2)">Tab 3</button>
+</div>
+
+<div class="template-select">
+  <label for="template">Choose Template: </label>
+  <select id="template" onchange="applyTemplate(this.value)">
+    <option value="">--None--</option>
+    <option value="html">HTML Boilerplate</option>
+    <option value="css">CSS Starter</option>
+    <option value="js">JS Function</option>
+  </select>
+</div>
+
+<textarea id="codeInput" placeholder="Write your code here..."></textarea>
+<button class="run-btn" onclick="runCode()">▶ Run</button>
+<div class="output" id="codeOutput"></div>
+
+  </div>  <script>
+    let currentTab = 0;
+    let snippets = JSON.parse(localStorage.getItem('codesmithSnippets')) || ["", "", ""];
+
+    const codeInput = document.getElementById('codeInput');
+    const template = document.getElementById('template');
+
+    function saveSnippets() {
+      snippets[currentTab] = codeInput.value;
+      localStorage.setItem('codesmithSnippets', JSON.stringify(snippets));
+    }
+
+    function switchTab(tabIndex) {
+      saveSnippets();
+      currentTab = tabIndex;
+      document.querySelectorAll('.tab-controls button').forEach((btn, i) => {
+        btn.classList.toggle('active', i === tabIndex);
+      });
+      codeInput.value = snippets[tabIndex] || "";
+    }
+
+    function runCode() {
+      saveSnippets();
+      const code = codeInput.value;
+      const output = document.getElementById('codeOutput');
+      output.innerHTML = '';
+
+      const iframe = document.createElement('iframe');
+      iframe.style.width = '100%';
+      iframe.style.height = '300px';
+      iframe.style.border = 'none';
+      iframe.style.background = '#fff';
+      iframe.style.borderRadius = '10px';
+
+      output.appendChild(iframe);
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+      iframeDoc.open();
+      iframeDoc.write(code);
+      iframeDoc.close();
+    }
+
+    function applyTemplate(type) {
+      const templates = {
+        html: `<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>My Page</title>\n</head>\n<body>\n\n</body>\n</html>`,
+        css: `body {\n  margin: 0;\n  font-family: sans-serif;\n  background-color: #f0f0f0;\n}`,
+        js: `function greet(name) {\n  console.log('Hello, ' + name);\n}\n\ngreet('Xerion');`
+      };
+      codeInput.value = templates[type] || "";
+    }
+
+    // Load initial tab
+    switchTab(0);
+  </script></body>
+</html>

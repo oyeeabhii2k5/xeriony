@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Profile</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 30px;
+      background: rgba(0, 0, 0, 0.7);
+      font-size: 24px;
+      color: #00fff7;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    }
+
+    header a {
+      color: #00fff7;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .container {
+      flex: 1;
+      padding: 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .path-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+      transition: 0.3s;
+    }
+
+    .path-card h3 {
+      color: #00fff7;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .path-card input[type="text"], .path-card textarea, .path-card select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .path-card button {
+      padding: 10px 20px;
+      background: #00fff7;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .path-card img {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    .message {
+      font-size: 18px;
+      color: #00fff7;
+      margin-top: 20px;
+    }
+
+    .expandable-card-content {
+      display: none;
+      margin-top: 15px;
+    }
+
+    .expandable-card.active .expandable-card-content {
+      display: block;
+    }
+
+    .profile-pic-upload {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      background: #00fff7;
+      color: #000;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .profile-pic-upload input[type="file"] {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span>Profile</span>
+    <a href="../dashboard.html">Back to Dashboard</a>
+  </header>
+
+  <div class="container">
+    <!-- Profile Picture -->
+    <div class="path-card">
+      <h3>Profile Picture</h3>
+      <div class="profile-pic-upload">
+        <label for="fileInput">Upload New Picture</label>
+        <input type="file" id="fileInput" accept="image/*" onchange="previewImage(event)">
+      </div>
+      <div id="profilePicContainer" style="margin-top: 20px;">
+        <img id="profilePic" src="default-profile.jpg" alt="Profile Picture" />
+      </div>
+    </div>
+
+    <!-- User Info -->
+    <div class="path-card">
+      <h3>User Information</h3>
+      <div class="content">
+        <label>Name:</label>
+        <input type="text" id="userName" placeholder="Enter your name">
+        <label>Bio:</label>
+        <textarea id="userBio" placeholder="Tell us about yourself" rows="4"></textarea>
+        <button onclick="saveUserInfo()">Save Info</button>
+      </div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="path-card expandable-card" id="achievementsCard">
+      <h3><i class="fas fa-trophy"></i> Achievements</h3>
+      <div class="expandable-card-content">
+        <textarea id="achievementsInput" placeholder="Add an achievement" rows="4"></textarea>
+        <button onclick="saveAchievement()">Add Achievement</button>
+        <div id="achievementsList"></div>
+      </div>
+    </div>
+
+    <!-- Activity Log -->
+    <div class="path-card expandable-card" id="activityLogCard">
+      <h3><i class="fas fa-history"></i> Activity Log</h3>
+      <div class="expandable-card-content">
+        <textarea id="activityInput" placeholder="Log an activity..." rows="3"></textarea>
+        <button onclick="saveActivity()">Add Activity</button>
+        <div id="activityLog"></div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="path-card expandable-card" id="settingsCard">
+      <h3><i class="fas fa-cogs"></i> Settings</h3>
+      <div class="expandable-card-content">
+        <label>Enable Notifications:</label>
+        <select id="notificationsSelect">
+          <option value="enabled">Enabled</option>
+          <option value="disabled">Disabled</option>
+        </select>
+        <button onclick="saveSettings()">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function previewImage(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('profilePic').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function saveUserInfo() {
+      const userName = document.getElementById('userName').value;
+      const userBio = document.getElementById('userBio').value;
+      localStorage.setItem('userName', userName);
+      localStorage.setItem('userBio', userBio);
+      alert('User information saved!');
+    }
+
+    function saveAchievement() {
+      const achievement = document.getElementById('achievementsInput').value;
+      if (achievement) {
+        let achievements = JSON.parse(localStorage.getItem('achievements')) || [];
+        achievements.push(achievement);
+        localStorage.setItem('achievements', JSON.stringify(achievements));
+        document.getElementById('achievementsInput').value = '';
+        renderAchievements();
+      } else {
+        alert('Please add an achievement.');
+      }
+    }
+
+    function renderAchievements() {
+      const achievements = JSON.parse(localStorage.getItem('achievements')) || [];
+      const achievementsList = document.getElementById('achievementsList');
+      achievementsList.innerHTML = '';
+      achievements.forEach(achievement => {
+        const p = document.createElement('p');
+        p.textContent = achievement;
+        achievementsList.appendChild(p);
+      });
+    }
+
+    function saveActivity() {
+      const activity = document.getElementById('activityInput').value;
+      if (activity) {
+        let logs = JSON.parse(localStorage.getItem('activityLog')) || [];
+        logs.push(activity);
+        localStorage.setItem('activityLog', JSON.stringify(logs));
+        document.getElementById('activityInput').value = '';
+        renderActivityLog();
+      } else {
+        alert('Please enter activity');
+      }
+    }
+
+    function renderActivityLog() {
+      const logs = JSON.parse(localStorage.getItem('activityLog')) || [];
+      const container = document.getElementById('activityLog');
+      container.innerHTML = '';
+      logs.forEach(log => {
+        const p = document.createElement('p');
+        p.textContent = log;
+        container.appendChild(p);
+      });
+    }
+
+    function saveSettings() {
+      const notifications = document.getElementById('notificationsSelect').value;
+      localStorage.setItem('notifications', notifications);
+      alert('Settings saved!');
+    }
+
+    window.onload = () => {
+      document.getElementById('userName').value = localStorage.getItem('userName') || '';
+      document.getElementById('userBio').value = localStorage.getItem('userBio') || '';
+      document.getElementById('notificationsSelect').value = localStorage.getItem('notifications') || 'enabled';
+      renderAchievements();
+      renderActivityLog();
+    };
+
+    // Toggle only on h3 click
+    document.querySelectorAll('.expandable-card h3').forEach(header => {
+      header.addEventListener('click', function () {
+        const card = this.parentElement;
+        const isActive = card.classList.contains('active');
+
+        document.querySelectorAll('.expandable-card').forEach(c => c.classList.remove('active'));
+
+        if (!isActive) card.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

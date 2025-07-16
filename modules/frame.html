@@ -1,0 +1,244 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>XERIONFrames</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  background: rgba(0, 0, 0, 0.7);
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 24px;
+  color: #00fff7;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+header a {
+  color: #00fff7;
+  text-decoration: none;
+  font-size: 16px;
+  padding: 5px 10px;
+  border: 1px solid #00fff7;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+header a:hover {
+  background: #00fff7;
+  color: #000;
+}
+
+main {
+  padding: 20px;
+  flex-grow: 1;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.upload-box {
+  background: rgba(0,0,0,0.5);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  margin-bottom: 30px;
+  box-shadow: 0 0 15px rgba(0,255,255,0.3);
+}
+
+.upload-box input, .upload-box textarea, .upload-box button {
+  margin: 10px;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+}
+
+.upload-box input, .upload-box textarea {
+  width: 80%;
+  background: #2c3e50;
+  color: white;
+}
+
+.upload-box button {
+  background: #00fff7;
+  color: #000;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.upload-box button:hover {
+  transform: scale(1.05);
+}
+
+.frame-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.frame {
+  background: #1a1a1a;
+  border: 2px solid #00fff7;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0,255,255,0.2);
+  overflow: hidden;
+  transition: transform 0.3s;
+  position: relative;
+  cursor: grab;
+}
+
+.frame.dragging {
+  opacity: 0.5;
+  transform: scale(1.05);
+}
+
+.frame img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.frame p {
+  padding: 10px;
+  font-size: 14px;
+  background: #111;
+}
+
+.delete-btn, .share-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #00fff7;
+  border: none;
+  padding: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.share-btn {
+  right: 60px;
+}
+
+footer {
+  text-align: center;
+  font-size: 14px;
+  padding: 20px;
+  background: rgba(0,0,0,0.3);
+  border-top: 1px solid #00fff7;
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <div>Frames</div>
+    <a href= "../dashboard.html">⬅ Back to Dashboard</a>
+  </header>  <main>
+    <div class="upload-box">
+      <h2>Upload a Memory</h2>
+      <input type="file" id="imageInput" accept="image/*">
+      <br>
+      <textarea id="captionInput" rows="3" placeholder="Write a short caption..."></textarea>
+      <br>
+      <button onclick="addFrame()">Add to Frame Wall</button>
+    </div><div class="frame-grid" id="frameGrid"></div>
+
+  </main>  <footer>
+    &copy; 2025 XERION | Framed memories that stay.
+  </footer>  <script>
+    let frameData = JSON.parse(localStorage.getItem('xerionFrames')) || [];
+
+    function renderFrames() {
+      const grid = document.getElementById('frameGrid');
+      grid.innerHTML = '';
+      frameData.forEach((frame, index) => {
+        const div = document.createElement('div');
+        div.className = 'frame';
+        div.draggable = true;
+        div.innerHTML = `
+          <img src="${frame.image}" alt="Memory">
+          <p>${frame.caption}</p>
+          <button class="share-btn" onclick="shareFrame(${index})">Share</button>
+          <button class="delete-btn" onclick="deleteFrame(${index})">Delete</button>
+        `;
+        addDragEvents(div, index);
+        grid.appendChild(div);
+      });
+    }
+
+    function addFrame() {
+      const imageInput = document.getElementById('imageInput');
+      const captionInput = document.getElementById('captionInput');
+      const file = imageInput.files[0];
+      const reader = new FileReader();
+
+      if (!file || captionInput.value.trim() === '') {
+        alert('Please select an image and write a caption.');
+        return;
+      }
+
+      reader.onload = function (e) {
+        frameData.push({
+          image: e.target.result,
+          caption: captionInput.value.trim()
+        });
+        localStorage.setItem('xerionFrames', JSON.stringify(frameData));
+        renderFrames();
+        imageInput.value = '';
+        captionInput.value = '';
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    function deleteFrame(index) {
+      if (confirm('Delete this frame?')) {
+        frameData.splice(index, 1);
+        localStorage.setItem('xerionFrames', JSON.stringify(frameData));
+        renderFrames();
+      }
+    }
+
+    function shareFrame(index) {
+      const frame = frameData[index];
+      const blob = new Blob([frame.caption], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'memory.txt';
+      link.click();
+    }
+
+    function addDragEvents(element, index) {
+      element.addEventListener('dragstart', () => {
+        element.classList.add('dragging');
+        element.dataset.index = index;
+      });
+
+      element.addEventListener('dragend', () => {
+        element.classList.remove('dragging');
+        const draggedIndex = parseInt(element.dataset.index);
+        const dropIndex = [...element.parentElement.children].indexOf(element);
+        const movedItem = frameData.splice(draggedIndex, 1)[0];
+        frameData.splice(dropIndex, 0, movedItem);
+        localStorage.setItem('xerionFrames', JSON.stringify(frameData));
+        renderFrames();
+      });
+    }
+
+    renderFrames();
+  </script></body>
+</html>
