@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome to XERION</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #000428, #004e92);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: #00000088;
+      padding: 20px 0;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      color: #fff;
+      letter-spacing: 2px;
+    }
+
+    .ai-section h2 {
+      font-size: 3rem;
+      color: #00c6ff;
+      margin-bottom: 20px;
+    }
+
+    .ai-image {
+      width: 180px;
+      height: 200px;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+
+    .welcome-text {
+      font-size: 1.5rem;
+      margin: 10px 0;
+    }
+
+    .welcome-text span {
+      color: #00c6ff;
+      font-weight: bold;
+    }
+
+    .about-xerion {
+      max-width: 500px;
+      font-size: 1rem;
+      color: #ccc;
+      margin: 15px auto 30px;
+      line-height: 1.6;
+    }
+
+    .enter-button {
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      background-color: #00c6ff;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .enter-button:hover {
+      background-color: #0088cc;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>ABHI</h1>
+  </header>
+
+  <section class="ai-section">
+    <h2>XERION</h2>
+    <img src="../assets/avatars/xerion-chill-removebg-preview.png" alt="Xerion AI" class="ai-image" />
+    <p class="welcome-text">Welcome to <span>XERION</span></p>
+    <p class="about-xerion">
+      Xerion is your intelligent multi-personality AI assistant system. 
+    </p>
+    <button class="enter-button" id="enterBtn">Enter</button>
+  </section>
+
+  <script>
+    document.getElementById("enterBtn").addEventListener("click", function () {
+      window.location.href = "login.html";
+    });
+  </script>
+
+</body>
+</html>

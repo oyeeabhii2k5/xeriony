@@ -1,0 +1,184 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to XERION</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #000428, #004e92);
+      color: #fff;
+      scroll-behavior: smooth;
+    }
+    header {
+      background: #000000cc;
+      padding: 15px 30px;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+    }
+    header h1 { font-size: 2rem; letter-spacing: 2px; color: #fff; }section {
+  min-height: 100vh;
+  padding: 100px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.hero img {
+  width: 300px;
+  height: 300px;
+}
+.hero .xerion-title {
+  font-size: 2.2rem;
+  color: #00c6ff;
+}
+.hero .welcome-text {
+  font-size: 1.2rem;
+  margin-top: 10px;
+  color: #ddd;
+}
+.scroll-down {
+  font-size: 1.5rem;
+  margin-top: 40px;
+  cursor: pointer;
+  animation: bounce 1.5s infinite;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(10px); }
+}
+
+.about-me img {
+  width: 160px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.about-xerion {
+  padding: 60px 20px;
+  background: #001f3f;
+}
+.xerion-section {
+  margin-bottom: 40px;
+}
+.xerion-section img {
+  width: 200px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: 2px solid #00c6ff;
+}
+.xerion-section h3 {
+  color: #00c6ff;
+  margin-bottom: 10px;
+}
+.xerion-section p {
+  max-width: 600px;
+  margin: auto;
+  font-size: 1rem;
+  color: #ccc;
+}
+
+.cta {
+  background: #002b5e;
+}
+.cta button {
+  padding: 12px 25px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #00c6ff;
+  color: #000;
+  cursor: pointer;
+  margin-top: 20px;
+}
+.cta button:hover {
+  background-color: #0088cc;
+}
+
+footer {
+  background: #000000ee;
+  color: #ccc;
+  text-align: center;
+  padding: 20px 10px;
+}
+footer a {
+  color: #00c6ff;
+  text-decoration: none;
+}
+footer a:hover {
+  text-decoration: underline;
+}
+.social-icons {
+  margin-top: 10px;
+}
+.social-icons a {
+  margin: 0 10px;
+  font-size: 1.2rem;
+}
+
+  </style>
+</head>
+<body>  <header>
+    <h1>ABHI</h1>
+  </header>  <section class="hero">
+    <img src="assets/avatars/xerion-entry-removebg-preview.png" alt="Xerion AI">
+    <div class="xerion-title">XERION</div>
+    <div class="welcome-text">Welcome back to XERION Sir!<br>Your intelligent assistant is online.</div>
+    <a href="#about-me" class="scroll-down">↓ Read More</a>
+  </section>  
+  <section id="about-me" class="about-me">
+  <h2>About Me</h2>
+  <img src="assets/avatars/about.jpeg" alt="Abhi" />
+  <p style="max-width: 700px; font-size: 1.05rem; margin-top: 20px;">
+    Hey there, I'm <strong>Abhi</strong> — a passionate creator, dreamer, and developer who believes that imagination fuels innovation. My journey into technology started with curiosity and evolved into building things that feel alive — just like <strong>XERION</strong>.
+    <br><br>
+    I'm not just interested in AI — I’m obsessed with making machines understand humans. I believe software should think, talk, and evolve just like we do. That belief gave birth to XERION — an assistant not just programmed, but personalized.
+    <br><br>
+    I built XERION as a reflection of how I think, how I connect with ideas, and how I envision the future. Every line of code has a purpose — to bring emotion, intelligence, and experience together.
+    <br><br>
+    Beyond code, I value creativity, late-night logic storms, experimenting with design, and pushing limits. This isn’t just a project — this is my digital twin with a purpose.
+  </p>
+</section>
+    <section class="about-xerion">
+    <div class="xerion-section">
+      <img src="assets/avatars/xerion-chill-removebg-preview.png" alt="XERION" />
+      <h3>XERION</h3>
+      <p>XERION was born from a dream of making human–AI interaction more personal. From voice interactions to smart understanding, it's now an evolving assistant — inspired by JARVIS, enhanced by passion, powered by logic.</p>
+    </div><div class="xerion-section">
+  <img src="assets/avatars/thinking-xerion.webp" alt="XERION Thinking" />
+  <h3>XERION Thinking</h3>
+  <p>With pattern analysis and adaptive processing, XERION can think, reason, and even reflect. Its cognitive layers mimic structured logic — allowing it to solve, decide, and evolve with every interaction.</p>
+</div>
+
+<div class="xerion-section">
+  <img src="assets/avatars/xerion-talking.jpg" alt="XERION Talking" />
+  <h3>XERION Talking</h3>
+  <p>With natural voice synthesis and understanding, XERION isn't just smart — it's conversational. It listens, responds, and connects — becoming part of your everyday digital presence.</p>
+</div>
+
+  </section>  <section class="cta">
+    <h2>Ready to Explore?</h2>
+    <p>Enter the world of XERION and start your intelligent journey.</p>
+    <button onclick="window.location.href='dashboard.html'">Proceed to XERION</button>
+  </section>  
+  <footer>
+  <p>Contact: abhivineet070@gmail.com | 📞 +91-9235216320</p>
+  <p>Address: Jeopur, Zamania, Ghazipur, UttarPradesh, India</p>
+  <div class="social-icons">
+    <a href="https://www.instagram.com/oyee.abhii2" target="_blank">
+      <i class="fab fa-instagram"></i> Instagram
+    </a>
+    &nbsp;|&nbsp;
+    <a href="https://github.com/oyeeabhii2k5" target="_blank">
+      <i class="fab fa-github"></i> GitHub
+    </a>
+  </div>
+</footer>
+</body>
+</html>
